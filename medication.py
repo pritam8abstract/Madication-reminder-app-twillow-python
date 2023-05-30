@@ -22,7 +22,7 @@ for row in sheet.iter_rows(min_row=2, values_only=True):
         time_difference = (reminder_time - current_time).total_seconds()
 
         # Create a Twilio client with your Account SID and Auth Token
-        client = Client('ACa4539a5e89c89015b28ad7113f95a6b2', 'afefaa341ec8c71003d0325f1b6e10c3')
+        client = Client('ACa4539a5e89c89015b28ad7113f95a6bx', 'afefaa341ec8c71003d0325f1b6e10c')
 
         # Create and schedule a WhatsApp message reminder
         message = client.messages.create(
