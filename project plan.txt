@@ -1,0 +1,52 @@
+To create a Python app that takes medication inputs from an Excel sheet and sends reminders through WhatsApp using Twilio, we need to perform the following steps:
+
+1. Set up a Twilio account: Go to the Twilio website (https://www.twilio.com/) and create a new account. Note down your Account SID and Auth Token, as you will need them to interact with the Twilio API.
+
+2. Install required packages: install the necessary Python packages: `pip install openpyxl twilio`.
+
+3. Prepare the Excel sheet: Excel sheet for the medication information. The sheet should have columns for medication name, dosage, and the time at which the reminder should be sent.
+
+4. Write Python code: 
+```python
+from openpyxl import load_workbook
+from datetime import datetime
+from twilio.rest import Client
+
+# Load the Excel sheet
+workbook = load_workbook('medication_data.xlsx')
+sheet = workbook.active
+
+# Get current date and time
+current_time = datetime.now()
+
+# Iterate through the rows of the sheet
+for row in sheet.iter_rows(min_row=2, values_only=True):
+    medication_name, dosage, reminder_time = row
+
+    # Parse the reminder time from the sheet
+    reminder_time = datetime.strptime(reminder_time, '%Y-%m-%d %H:%M:%S')
+
+    # Check if the reminder time is in the future
+    if current_time < reminder_time:
+        # Calculate the time difference in seconds
+        time_difference = (reminder_time - current_time).total_seconds()
+
+        # Create a Twilio client with your Account SID and Auth Token
+        client = Client('_ACCOUNT_SID', '_AUTH_TOKEN')
+
+        # Create and schedule a WhatsApp message reminder
+        message = client.messages.create(
+            from_='whatsapp:+1234567890',  # Replace with your Twilio WhatsApp number
+            body=f"Reminder: Take {dosage} of {medication_name}.",
+            to='whatsapp:+xxxxxxxxxxxx',  # Replace with the recipient's WhatsApp number
+            media_url='https://example.com/image.png',  # Optionally, add media URL
+            status_callback='https://example.com/callback'  # Optionally, add a callback URL
+        )
+
+        print(f"Reminder scheduled for {reminder_time}. Message SID: {message.sid}")
+
+# Save and close the workbook
+workbook.save('medication_data.xlsx')
+workbook.close()
+```
+save and run the code
